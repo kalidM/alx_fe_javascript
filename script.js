@@ -17,7 +17,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   
     if (newQuoteText && newQuoteCategory) {
       quotes.push({ text: newQuoteText, category: newQuoteCategory });
-      saveQuotes();
+      saveQuotes(); // Update localStorage
       alert("New quote added successfully!");
       document.getElementById('newQuoteText').value = '';
       document.getElementById('newQuoteCategory').value = '';
@@ -58,7 +58,7 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
       try {
         const importedQuotes = JSON.parse(event.target.result);
         quotes.push(...importedQuotes);
-        saveQuotes();
+        saveQuotes(); // Update localStorage after import
         alert('Quotes imported successfully!');
       } catch (error) {
         alert('Invalid JSON file.');
@@ -77,4 +77,5 @@ let quotes = JSON.parse(localStorage.getItem('quotes')) || [
       document.getElementById('quoteDisplay').textContent = JSON.parse(lastQuote).text;
     }
   });
+
   
