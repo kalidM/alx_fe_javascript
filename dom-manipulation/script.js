@@ -10,13 +10,35 @@ function saveQuotes() {
   localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
-// Function to display a random quote
-function showRandomQuote() {
+// Function to populate categories in the dropdown
+function populateCategories() {
+  const categoryFilter = document.getElementById('categoryFilter');
+  const categories = [...new Set(quotes.map(quote => quote.category))]; // Extract unique categories
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>'; // Reset dropdown
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+// Function to filter quotes by category
+function filterQuotes() {
+  const selectedCategory = document.getElementById('categoryFilter').value;
+  const filteredQuotes = selectedCategory === 'all' 
+    ? quotes 
+    : quotes.filter(quote => quote.category === selectedCategory);
+  displayQuotes(filteredQuotes);
+  localStorage.setItem('lastSelectedCategory', selectedCategory); // Save selected category
+}
+
+// Function to display quotes
+function displayQuotes(quotesToDisplay) {
   const quoteDisplay = document.getElementById('quoteDisplay');
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
-  quoteDisplay.innerHTML = `<strong>${randomQuote.text}</strong> <em>(${randomQuote.category})</em>`;
-  saveLastViewedQuote(randomQuote); // Save the last viewed quote to session storage
+  quoteDisplay.innerHTML = quotesToDisplay.length > 0
+    ? quotesToDisplay.map(quote => `<p><strong>${quote.text}</strong> <em>(${quote.category})</em></p>`).join('')
+    : 'No quotes found for this category.';
 }
 
 // Function to add a new quote
@@ -27,25 +49,12 @@ function addQuote() {
   if (newQuoteText && newQuoteCategory) {
     quotes.push({ text: newQuoteText, category: newQuoteCategory });
     saveQuotes(); // Save quotes to local storage
+    populateCategories(); // Update the categories dropdown
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('Quote added successfully!');
   } else {
     alert('Please fill in both the quote and category fields.');
-  }
-}
-
-// Function to save the last viewed quote to session storage
-function saveLastViewedQuote(quote) {
-  sessionStorage.setItem('lastViewedQuote', JSON.stringify(quote));
-}
-
-// Function to load the last viewed quote from session storage
-function loadLastViewedQuote() {
-  const lastQuote = JSON.parse(sessionStorage.getItem('lastViewedQuote'));
-  if (lastQuote) {
-    const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = `<strong>${lastQuote.text}</strong> <em>(${lastQuote.category})</em>`;
   }
 }
 
@@ -68,16 +77,25 @@ function importFromJsonFile(event) {
     const importedQuotes = JSON.parse(event.target.result);
     quotes.push(...importedQuotes);
     saveQuotes(); // Save updated quotes to local storage
+    populateCategories(); // Update the categories dropdown
     alert('Quotes imported successfully!');
   };
   fileReader.readAsText(event.target.files[0]);
 }
 
+// Load the last selected category from local storage
+function loadLastSelectedCategory() {
+  const lastSelectedCategory = localStorage.getItem('lastSelectedCategory') || 'all';
+  document.getElementById('categoryFilter').value = lastSelectedCategory;
+  filterQuotes(); // Apply the filter
+}
+
 // Event listener for the "Show New Quote" button
-document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+document.getElementById('newQuote').addEventListener('click', () => {
+  filterQuotes(); // Apply the current filter
+});
 
-// Load the last viewed quote when the page loads
-loadLastViewedQuote();
-
-// Initial quote display
-showRandomQuote();
+// Initial setup
+populateCategories(); // Populate categories dropdown
+loadLastSelectedCategory(); // Load the last selected category
+filterQuotes(); // Apply the filter
