@@ -32,7 +32,7 @@ async function postQuotesToServer(quotes) {
       method: 'POST',
       body: JSON.stringify(quotes),
       headers: {
-        'Content-type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8', // Add Content-Type header
       },
     });
     const data = await response.json();
