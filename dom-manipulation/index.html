@@ -31,7 +31,9 @@
   <h1>Dynamic Quote Generator</h1>
   <div id="quoteDisplay">Select a category and click "Show New Quote" to see a random quote.</div>
   <button id="newQuote">Show New Quote</button>
-  
+  <button onclick="exportQuotes()">Export Quotes</button>
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+
   <div>
     <h2>Add a New Quote</h2>
     <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
