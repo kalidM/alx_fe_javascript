@@ -23,5 +23,9 @@
     <option value="">All Categories</option>
   </select>
   <script src="script.js"></script>
+
 </body>
+<button onclick="exportToJson()">Export Quotes to JSON</button>
+<input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+
 </html>
